@@ -1,7 +1,7 @@
 import os
 
 
-# create subfolder
+# create folder
 def createFolder(fldrName):
     cwd = os.getcwd()
     dir = os.path.join(cwd, fldrName)

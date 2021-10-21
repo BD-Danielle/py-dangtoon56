@@ -7,6 +7,7 @@ from headerSet import setHeader
 from parse import parseUrl, parseName
 from webdriverOpen import openBrowser, scrollPage, downloadHTML, closeBrowser
 from imagesDownload import downloadImages
+from jpgConverter import converPDF
 
 # public function or module as below
 import re, time, bs4
@@ -18,7 +19,8 @@ if __name__ == '__main__':
         print('URL for contents or episode:')
         # examples:
         # https://dangtoon56.com/결혼하는-남자(contents)
-        # https://dangtoon56.com/결혼하는-남자-연재-8화-8-화.html(episode)
+        # https://dangtoon56.com/결혼하는-남자-연재-9화-9-화.html(episode)
+        # https://dangtoon56.com/%EA%B2%B0%ED%98%BC%ED%95%98%EB%8A%94-%EB%82%A8%EC%9E%90-10%ED%99%94.html
         # https://dangtoon56.com/파애(contents)
         # https://dangtoon56.com/파애-1화.html(episode)
 
