@@ -1,0 +1,6 @@
+.history
+*.jpg
+/__pycache__/
+.vscode
+*.html
+*.zip
