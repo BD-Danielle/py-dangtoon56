@@ -11,8 +11,8 @@ def downloadImages(name):
     if (os.path.exists('{}.html'.format(name))):
         with open('{}.html'.format(name), 'r') as f:
             createFolder(name)
-            toon_img = f.read()
-            soup = BeautifulSoup(toon_img, 'html.parser')
+            f_read = f.read()
+            soup = BeautifulSoup(f_read, 'html.parser')
             imagesUrl = soup.select('div#toon_img > p > img[data-src]')
             # print(len(imagesUrl)) // 131
             digit_to_list = [int(0) for x in str(len(imagesUrl))]

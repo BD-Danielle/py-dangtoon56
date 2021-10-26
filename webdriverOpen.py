@@ -1,12 +1,15 @@
 import time
 import random
 import os
+import re
 
+from withOpen import with_open_write, with_open_read
 from folderCreate import createFolder
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import TimeoutException
 from webdriver_manager.chrome import ChromeDriverManager
+from bs4 import BeautifulSoup
 
 driver = webdriver.Chrome(ChromeDriverManager().install())
 
@@ -39,26 +42,47 @@ def downloadHTML(bool, name):
     # contents = driver.find_element_by_css_selector('form#fboardlist > div > table > tbody > tr > td > a[href]')
     # episode = driver.find_element_by_css_selector('div#toon_img > p > img[data-src]')
     print(bool)
-    selector = 'form#fboardlist' if not bool else 'div#toon_img'
+    selector = 'div#toon_img' if bool else 'form#fboardlist'
     element = driver.find_element_by_css_selector(selector)
 
-    if (element.is_displayed()):
-        # contents is False
-        if not bool:
-            createFolder(name)
-            if not (os.path.exists('{}.html'.format(name))):
-                with open('{}.html'.format(name), 'w') as f:
-                    f.write(driver.page_source)
-        # episode is True
+    # always check file is existed or not
+    while (element.is_displayed()):
+        fldrName = name.split('-')[0] if bool else name
+        createFolder(fldrName)
+        if not (os.path.exists('{}.html'.format(name))):
+            with_open_write(name, 'html', driver.page_source)
         else:
-            title = name.split('-')[0]
-            print(title)
-            createFolder(title)
-            if not (os.path.exists('{}.html'.format(name))):
-                with open('{}.html'.format(name), 'w') as f:
-                    f.write(driver.page_source)
-    else:
-        print('element display none')
+            print('Do you wanna download {}.html again Y/n ?'.format(name))
+            feedback = input()
+            if not feedback == 'Y':
+                break
+            else:
+                with_open_write(name, 'html', driver.page_source)
+    
+    # extract episodes from contents
+    while not bool:
+        episodes = listEpisodes(name)
+        # prompt as following
+        print('-' * 50)
+        print('Do you want to download episodes as following ? \n')
+        print(f"{'No.' : <5}{'Episode' : <10}")
+        for idx, episode in enumerate(episodes):
+            reg_episode = re.findall(r"[^/]*[a-zA-Z0-9]*[^.html$]", episode)[1]
+            print(f"{len(episodes) - idx : <5}{reg_episode : <10}")
+        print('-' * 50)
+
+        # input as following
+        feedback = input()
+
+
+def listEpisodes(contents):
+    createFolder(contents)
+    if (os.path.exists('{}.html'.format(contents))):
+        f_read = with_open_read('html', contents)
+        soup = BeautifulSoup(f_read, 'html.parser')
+        links = soup.select('form#fboardlist table > tbody > tr > td > a[href]')
+        links_to_list = [link['href'] for link in links]
+        return links_to_list
 
 
 # close chrome browser
