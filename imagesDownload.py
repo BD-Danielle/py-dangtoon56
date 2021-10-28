@@ -2,15 +2,15 @@ import os
 import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
-from folderCreate import createFolder
+from folder import createFolder, goMainFolder
 
 
 def downloadImages(name):
     # os.chdir(name.split('-')[0])
     domain = 'https://dangtoon56.com'
     if (os.path.exists('{}.html'.format(name))):
+        # createFolder(name)
         with open('{}.html'.format(name), 'r') as f:
-            createFolder(name)
             f_read = f.read()
             soup = BeautifulSoup(f_read, 'html.parser')
             imagesUrl = soup.select('div#toon_img > p > img[data-src]')
@@ -35,6 +35,7 @@ def downloadImages(name):
                 img_data = requests.get(imageUrl['data-src']).content
                 with open('{}.jpg'.format(''.join(pageNo_to_listStr)), 'wb') as f:
                     f.write(img_data)
+        goMainFolder()
 
 
 # downloadImages('결혼하는-남자-연재-8화-8-화')

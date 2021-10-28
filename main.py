@@ -6,7 +6,10 @@ from requestsGet import getRequests
 from headerSet import setHeader
 from parse import parseUrl, parseName
 from webdriverOpen import openBrowser, scrollPage, downloadHTML, closeBrowser
+# from webdriverOpen import downloadHTML, closeBrowser
 from imagesDownload import downloadImages
+from folder import createFolder
+
 # from jpgConverter import converPDF
 
 # public function or module as below
@@ -27,34 +30,38 @@ if __name__ == '__main__':
         # https://dangtoon56.com//사슴과-마주친-눈-35화.html
         # https://dangtoon56.com/반칙
         # https://dangtoon56.com/반칙-9화.html
+        # https://dangtoon56.com/그래도-좋아해
 
-        domain = 'https://dangtoon56.com'
         url = parseUrl(input(), encoding='utf-8', errors='replace')
+        if not url:
+            break
         episode = True if re.findall('.html$', url) else False
         contents = False
 
         # prompt
-        print('Do you want to download {} Y/n ?'.format('episode' if episode else 'contents'))
+        print('Do you want to download {} y/n ?'.format('episode' if episode else 'contents'))
         feedback = input()
-        if not feedback == 'Y':
+        if not feedback == 'y':
+            closeBrowser()
             break
         else:
             try:
                 res = None
                 res = getRequests(url, headers=setHeader())
                 res.raise_for_status()
-                break
             except requests.exceptions.HTTPError as e:
                 print(e)
-
+                closeBrowser()
+                # break
+            
+            manga_name = parseName(url, encoding='utf-8', errors='replace')
             # open browser
-            openBrowser(url)
+            openBrowser(manga_name, url)
             scrollPage()
 
-            manga_name = parseName(url, encoding='utf-8', errors='replace')
-            print('eposide', episode)
-            print('contents', contents)
+            
             # distinguish contents or episode
+            # fldrName = manga_name.split('-')[0] if contents else manga_name
             if episode:
                 downloadHTML(episode, manga_name)
                 downloadImages(manga_name)
