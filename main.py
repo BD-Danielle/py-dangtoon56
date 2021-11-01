@@ -18,8 +18,10 @@ import requests
 
 if __name__ == '__main__':
     print('They may not be copied for commercial purposes or passed on or changed and used on other websites.')
-    while True:
-        print('URL for contents or episode:')
+    print('URL for contents or episode:')
+    url = parseUrl(input(), encoding='utf-8', errors='replace')
+
+    while url:
         # examples:
         # https://dangtoon56.com/결혼하는-남자(contents)
         # https://dangtoon56.com/결혼하는-남자-연재-9화-9-화.html(episode)
@@ -31,15 +33,17 @@ if __name__ == '__main__':
         # https://dangtoon56.com/반칙
         # https://dangtoon56.com/반칙-9화.html
         # https://dangtoon56.com/그래도-좋아해
+        # https://dangtoon56.com/늪의-너에게
 
-        url = parseUrl(input(), encoding='utf-8', errors='replace')
         if not url:
+            print('sorry to see you go!')
             break
-        episode = True if re.findall('.html$', url) else False
+        judge = True if re.findall('.html$', url) else False
+        episode = True
         contents = False
 
         # prompt
-        print('Do you want to download {} y/n ?'.format('episode' if episode else 'contents'))
+        print('Do you want to download {} y/n ?'.format('episode' if judge else 'contents'))
         feedback = input()
         if not feedback == 'y':
             closeBrowser()
@@ -62,13 +66,13 @@ if __name__ == '__main__':
             
             # distinguish contents or episode
             # fldrName = manga_name.split('-')[0] if contents else manga_name
-            if episode:
+            if judge:
                 downloadHTML(episode, manga_name)
                 downloadImages(manga_name)
+                closeBrowser()
+                break
+
             else:
                 downloadHTML(contents, manga_name)
-                
-
-            # downloadHTML(episode, manga_name) if episode else downloadHTML(contents, manga_name)
-            # downloadImages(manga_name)
-            closeBrowser()
+                closeBrowser()
+                break

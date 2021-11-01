@@ -12,18 +12,30 @@ from imagesDownload import downloadImages
 from folder import createFolder
 from withOpen import with_open_write, with_open_read
 
-driver = webdriver.Chrome(ChromeDriverManager().install())
+options = webdriver.ChromeOptions()
+options.add_argument('--headless')
+driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
+# driver = webdriver.Chrome(ChromeDriverManager().install())
+
+
+# get the driver
+def getDriver(url):
+    driver.get(url)
+    driver.implicitly_wait(10)
+    time.sleep(random.randrange(10))
+    driver.implicitly_wait(30)
 
 
 # open chrome browser
 def openBrowser(manga_name, url):
     if createFolder(manga_name):
-        driver.get(url)
-        driver.implicitly_wait(10)
-        time.sleep(random.randrange(10))
-        driver.implicitly_wait(30)
+        getDriver(url)
     else:
-        driver.get('file://' + os.getcwd() + '/' + manga_name + '.html')
+        if not (os.path.exists('{}.html'.format(manga_name))):
+            getDriver(url)
+            with_open_write(manga_name, 'html', driver.page_source)
+        else:
+            driver.get('file://' + os.getcwd() + '/' + manga_name + '.html')
 
 
 # scroll down page
@@ -46,18 +58,26 @@ def downloadHTML(bool, name):
     element = driver.find_element_by_css_selector(selector)
     domain = 'https://dangtoon56.com'
 
+    isDisplay = element.is_displayed()
+    if not isDisplay:
+        print('element is not display')
+        return
     # always check file is existed or not
-    while (element.is_displayed()):
+    while True:
         if not (os.path.exists('{}.html'.format(name))):
             with_open_write(name, 'html', driver.page_source)
         else:
-            print('Do you wanna download {}.html again y/n ?'.format(name))
+            print('Do you wanna download {}.html y/n ?'.format(name))
             feedback = input()
-            if not feedback == 'y':
+            if feedback == 'y':
+                # this deletes the file
+                # os.remove('{}.html'.format(name))
+                with_open_write(name, 'html', driver.page_source)
                 break
             else:
-                with_open_write(name, 'html', driver.page_source)
+                break
     
+      
     # extract episodes from contents
     if not bool:
         episodes = listEpisodes(name)
@@ -71,19 +91,24 @@ def downloadHTML(bool, name):
             reg_episodes.append(reg_episode)
             print(f"{len(episodes) - idx : <5}{reg_episode : <10}")
         print('''Please input episode number as preceding, e.g.,
-        input 1-5 will download 1 to 5.....................
-        input 1, 2, 5 will download 1, 2 and 5 so on.......
-        input 1, 2, 5, 7-10 will download 1, 2, 5, 7 to 10.
+        1) use dash to download serial number
+        input 1-5 to download the range of numbers.......................
+        2) use dot or space to download non consecutive numbers.
+        input 1, 2, 5 will download 1, 2 and 5 so on.....................
+        input 1 2, 5 will download 1 2 and 5 so on.......................
         ''')
         print('-' * 70)
 
         # input as following
         choose = input()
         if choose:
-            choose_to_list = re.findall(r'[0-9]+\-?[0-9]*', choose)
+            choose_to_list = re.findall(r'[0-9]+\-?[0-9]*', str(choose))
             print(choose_to_list)
             choices_to_list = []
             for choice in choose_to_list:
+                if len(choose_to_list) == 1 and ('-' not in choose_to_list[0]):
+                    choices_to_list = choose_to_list
+                    break
                 try:
                     begin, end = choice.split('-')
                     choice_to_list = list(range(int(begin), int(end) + 1))
