@@ -22,19 +22,6 @@ if __name__ == '__main__':
     url = parseUrl(input(), encoding='utf-8', errors='replace')
 
     while url:
-        # examples:
-        # https://dangtoon56.com/결혼하는-남자(contents)
-        # https://dangtoon56.com/결혼하는-남자-연재-9화-9-화.html(episode)
-        # https://dangtoon56.com/%EA%B2%B0%ED%98%BC%ED%95%98%EB%8A%94-%EB%82%A8%EC%9E%90-10%ED%99%94.html
-        # https://dangtoon56.com/파애(contents)
-        # https://dangtoon56.com/파애-1화.html(episode)
-        # https://dangtoon56.com/사슴과-마주친-눈
-        # https://dangtoon56.com//사슴과-마주친-눈-35화.html
-        # https://dangtoon56.com/반칙
-        # https://dangtoon56.com/반칙-9화.html
-        # https://dangtoon56.com/그래도-좋아해
-        # https://dangtoon56.com/늪의-너에게
-
         if not url:
             print('sorry to see you go!')
             break

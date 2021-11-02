@@ -11,6 +11,7 @@ from bs4 import BeautifulSoup
 from imagesDownload import downloadImages
 from folder import createFolder
 from withOpen import with_open_write, with_open_read
+from inputClosed import closeInput
 
 options = webdriver.ChromeOptions()
 options.add_argument('--headless')
@@ -63,19 +64,16 @@ def downloadHTML(bool, name):
         print('element is not display')
         return
     # always check file is existed or not
+    callback = with_open_write(name, 'html', driver.page_source)
+    sec = 10
     while True:
         if not (os.path.exists('{}.html'.format(name))):
-            with_open_write(name, 'html', driver.page_source)
+            callback()
+            break
         else:
-            print('Do you wanna download {}.html y/n ?'.format(name))
-            feedback = input()
-            if feedback == 'y':
-                # this deletes the file
-                # os.remove('{}.html'.format(name))
-                with_open_write(name, 'html', driver.page_source)
-                break
-            else:
-                break
+            reminder = 'Do you wanna download {}.html y/n ?'.format(name)
+            closeInput(reminder, sec, callback)
+            break
     
       
     # extract episodes from contents
