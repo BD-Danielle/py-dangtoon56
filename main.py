@@ -20,7 +20,7 @@ if __name__ == '__main__':
     print('They may not be copied for commercial purposes or passed on or changed and used on other websites.')
     print('URL for contents or episode:')
     url = parseUrl(input(), encoding='utf-8', errors='replace')
-
+    # https://dangtoon15.com/웹툰/BL
     while url:
         if not url:
             print('sorry to see you go!')

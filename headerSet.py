@@ -5,7 +5,7 @@ def setHeader():
         'accept-language': 'ko, ko-KR, zh-TW, zh;q=0.9, en-US;q=0.8, en;q=0.7, zh-CN;q=0.6',
         'cache-control': 'no-cache',
         'pragma': 'no-cache',
-        'referer': 'https://dangtoon56.com/',
+        'referer': 'https://dangtoon15.com/',
         'sec-fetch-dest': 'image',
         'sec-fetch-mode': 'no-cors',
         'sec-fetch-site': 'cross-site',

@@ -29,13 +29,18 @@ def getDriver(url):
 
 # open chrome browser
 def openBrowser(manga_name, url):
+    sec = 10
+    reminder = 'Do you wanna download {}.html AGAIN y/n ?'.format(manga_name)
+    lda_getDriver = lambda: getDriver(url)
+    lda_wow = lambda: with_open_write(manga_name, 'html', 'w', driver.page_source)
     if createFolder(manga_name):
-        getDriver(url)
+        lda_getDriver()
     else:
         if not (os.path.exists('{}.html'.format(manga_name))):
-            getDriver(url)
-            with_open_write(manga_name, 'html', driver.page_source)
+            lda_getDriver(url)
+            lda_wow()
         else:
+            closeInput(reminder, sec, lda_getDriver, lda_wow)
             driver.get('file://' + os.getcwd() + '/' + manga_name + '.html')
 
 
@@ -57,22 +62,26 @@ def scrollPage():
 def downloadHTML(bool, name):
     selector = 'div#toon_img' if bool else 'form#fboardlist'
     element = driver.find_element_by_css_selector(selector)
-    domain = 'https://dangtoon56.com'
+    domain = 'https://dangtoon15.com'
 
     isDisplay = element.is_displayed()
     if not isDisplay:
         print('element is not display')
         return
     # always check file is existed or not
-    callback = with_open_write(name, 'html', driver.page_source)
     sec = 10
-    while True:
+    callback = lambda: with_open_write(name, 'html', 'w', driver.page_source)
+    entry = True
+    while entry:
         if not (os.path.exists('{}.html'.format(name))):
             callback()
+            entry = False
             break
         else:
             reminder = 'Do you wanna download {}.html y/n ?'.format(name)
             closeInput(reminder, sec, callback)
+            print(type(callback))
+            entry = False
             break
     
       

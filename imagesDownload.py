@@ -3,11 +3,12 @@ import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
 from folder import createFolder, goMainFolder
+from withOpen import with_open_write
 
 
 def downloadImages(name):
     # os.chdir(name.split('-')[0])
-    domain = 'https://dangtoon56.com'
+    domain = 'https://dangtoon15.com'
     if (os.path.exists('{}.html'.format(name))):
         # createFolder(name)
         with open('{}.html'.format(name), 'r') as f:
@@ -30,11 +31,21 @@ def downloadImages(name):
                 #     print(e)
                 idx_to_list = [int(x) for x in str(idx)]
                 pageNo_to_list = ([sum(i) for i in zip(digit_to_list[::-1], idx_to_list[::-1])] + digit_to_list[::-1][len(idx_to_list):])[::-1]
-                pageNo_to_listStr = [str(x) for x in pageNo_to_list]
+                pageNo_to_strlist = [str(x) for x in pageNo_to_list]
 
                 img_data = requests.get(imageUrl['data-src']).content
-                with open('{}.jpg'.format(''.join(pageNo_to_listStr)), 'wb') as f:
-                    f.write(img_data)
+                with_open_write(''.join(pageNo_to_strlist), 'jpg', 'wb', img_data)
+                # with open('{}.jpg'.format(''.join(pageNo_to_strlist)), 'wb') as f:
+                #     f.write(img_data)
+                fileSize = os.path.getsize('{}.jpg'.format(''.join(pageNo_to_strlist)))
+                download_times = 0
+                while fileSize < 6000:
+                    download_times += 1
+                    img_data = requests.get(imageUrl['data-src']).content
+                    with_open_write(''.join(pageNo_to_strlist), 'jpg', 'wb', img_data)
+                    if (download_times >= 10):
+                        break
+
         goMainFolder()
 
 

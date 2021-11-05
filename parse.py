@@ -17,4 +17,4 @@ def parseName(*args, **kwargs):
 
 
 # following examples as below
-# print(parseName('https://dangtoon56.com/결혼하는-남자-연재-8화-8-화.html', encoding='utf-8', errors='replace'))
+# print(parseName('https://dangtoon15.com/결혼하는-남자-연재-8화-8-화.html', encoding='utf-8', errors='replace'))
