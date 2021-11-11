@@ -15,7 +15,7 @@ def createFolder(fldrName):
     dir = os.path.join(cwd, fldrName)
     print(dir)
     # virgin create
-    if not os.path.exists(dir):
+    if not (os.path.exists(dir)):
         os.mkdir(dir)
         os.chdir(dir)
         return True

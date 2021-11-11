@@ -21,6 +21,7 @@ driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
 
 # get the driver
 def getDriver(url):
+    # print('24: ', url)
     driver.get(url)
     driver.implicitly_wait(10)
     time.sleep(random.randrange(10))
@@ -34,11 +35,13 @@ def openBrowser(manga_name, url):
     lda_getDriver = lambda: getDriver(url)
     lda_wow = lambda: with_open_write(manga_name, 'html', 'w', driver.page_source)
     if createFolder(manga_name):
-        lda_getDriver()
+        if not (os.path.exists('{}.html'.format(manga_name))):
+            getDriver(url)
+            with_open_write(manga_name, 'html', 'w', driver.page_source)
     else:
         if not (os.path.exists('{}.html'.format(manga_name))):
-            lda_getDriver(url)
-            lda_wow()
+            getDriver(url)
+            with_open_write(manga_name, 'html', 'w', driver.page_source)
         else:
             closeInput(reminder, sec, lda_getDriver, lda_wow)
             driver.get('file://' + os.getcwd() + '/' + manga_name + '.html')
@@ -80,7 +83,6 @@ def downloadHTML(bool, name):
         else:
             reminder = 'Do you wanna download {}.html y/n ?'.format(name)
             closeInput(reminder, sec, callback)
-            print(type(callback))
             entry = False
             break
     
@@ -110,28 +112,28 @@ def downloadHTML(bool, name):
         choose = input()
         if choose:
             choose_to_list = re.findall(r'[0-9]+\-?[0-9]*', str(choose))
-            print(choose_to_list)
             choices_to_list = []
             for choice in choose_to_list:
-                if len(choose_to_list) == 1 and ('-' not in choose_to_list[0]):
-                    choices_to_list = choose_to_list
-                    break
+                # if len(choose_to_list) >= 1 and ('-' not in choose_to_list[0]):
+                #     choices_to_list = choose_to_list
+                #     break
                 try:
                     begin, end = choice.split('-')
                     choice_to_list = list(range(int(begin), int(end) + 1))
                     choices_to_list.extend(choice_to_list)
-                    print(choices_to_list)
                 except ValueError as ve:
-                    choices_to_list.extend(choice)
+                    print('126: ', choice)
+                    choices_to_list.insert(len(choices_to_list), choice)
                     print(ve)
                     continue
-            print(choices_to_list)
+            print('131: ', choices_to_list)
         
             for choice in choices_to_list:
                 idx = len(reg_episodes) - int(choice)
                 if idx < 0:
                     break
                 url = domain + episodes[idx]
+                # print('137: ', url)
                 openBrowser(reg_episodes[idx], url)
                 downloadHTML(True, reg_episodes[idx])
                 downloadImages(reg_episodes[idx])
