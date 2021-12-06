@@ -2,7 +2,6 @@ import os
 import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
-from folder import createFolder, goMainFolder
 from withOpen import with_open_write
 
 
@@ -46,7 +45,6 @@ def downloadImages(name):
                     if (download_times >= 10):
                         break
 
-        goMainFolder()
 
 
 # downloadImages('결혼하는-남자-연재-8화-8-화')

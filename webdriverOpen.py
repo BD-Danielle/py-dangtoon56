@@ -9,8 +9,9 @@ from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import TimeoutException
 from bs4 import BeautifulSoup
 from imagesDownload import downloadImages
-from folder import createFolder
+from folder import createFolder, goMainFolder
 from withOpen import with_open_write, with_open_read
+from jpgConverter import convertPNG
 from inputClosed import closeInput
 
 options = webdriver.ChromeOptions()
@@ -114,9 +115,6 @@ def downloadHTML(bool, name):
             choose_to_list = re.findall(r'[0-9]+\-?[0-9]*', str(choose))
             choices_to_list = []
             for choice in choose_to_list:
-                # if len(choose_to_list) >= 1 and ('-' not in choose_to_list[0]):
-                #     choices_to_list = choose_to_list
-                #     break
                 try:
                     begin, end = choice.split('-')
                     choice_to_list = list(range(int(begin), int(end) + 1))
@@ -133,10 +131,11 @@ def downloadHTML(bool, name):
                 if idx < 0:
                     break
                 url = domain + episodes[idx]
-                # print('137: ', url)
                 openBrowser(reg_episodes[idx], url)
                 downloadHTML(True, reg_episodes[idx])
                 downloadImages(reg_episodes[idx])
+                convertPNG(reg_episodes[idx])
+                goMainFolder()
         else:
             print('you didnt choose any episodes, sorry to see you go')
 
